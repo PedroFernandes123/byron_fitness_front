@@ -1,6 +1,12 @@
 import api from './api';
 import { AuthResponse } from '../types';
 
+export const logout = async (): Promise<void> => {
+  // A rota /logout requer autenticação, mas o token já está
+  // sendo enviado automaticamente pelo interceptor do api.ts
+  await api.post('/users/logout');
+};
+
 /**
  * Autentica o usuário (Login)
  * Rota: POST /sessions
