@@ -1,88 +1,178 @@
-// src/components/AppHeader.tsx
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { useAuth } from '../../hooks/useAuth';
+import { useForm, Controller } from 'react-hook-form';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../navigation/AuthNavigator';
+import { AppHeader } from '../../components/AppHeader'; // Importa o Header
 
-interface AppHeaderProps {
-  /** * O texto a ser exibido após o logo 'bF'. 
-   * Default: 'BYRON Fitness' 
-   */
-  title?: string;
-  
-  /** * Se true, mostra o botão de voltar (→)[cite: 62]. 
-   */
-  canGoBack?: boolean;
-}
-
-export const AppHeader: React.FC<AppHeaderProps> = ({ 
-  title = "BYRON Fitness", // Valor padrão da maioria das telas [cite: 6]
-  canGoBack = false 
-}) => {
-  // Hook genérico para funcionar em qualquer stack de navegação
-  const navigation = useNavigation<any>(); 
-
-  return (
-    <View style={styles.container}>
-      {/* Lado Esquerdo: Botão de Voltar */}
-      <View style={styles.sideContainer}>
-        {canGoBack && (
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            {/* A seta de voltar (→) vista na 'Pagina inicial.pdf' [cite: 62] */}
-            <Text style={styles.backArrow}>→</Text> 
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Centro: Logo/Título */}
-      <View style={styles.titleContainer}>
-        {/* O logo 'bF' [cite: 1, 6, 13] */}
-        <Text style={styles.logo}>bF</Text>
-        {/* O 'title' é dinâmico (ex: "BYRON Fitness"  ou "Fitness" [cite: 14]) */}
-        <Text style={styles.appName}> {title}</Text>
-      </View>
-
-      {/* Lado Direito: Espaçador (para manter o título centralizado) */}
-      <View style={styles.sideContainer} />
-    </View>
-  );
+// Define os tipos para o formulário
+type FormData = {
+  email: string;
+  password: string;
 };
 
-// Estilos baseados nos PDFs
+// Define o tipo das props da rota
+type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+
+// A função do componente começa aqui
+export default function LoginScreen({ navigation }: Props) {
+  // --- Lógica do Componente ---
+  const { signIn } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    try {
+      await signIn(data.email, data.password);
+      // O RootNavigator cuidará da mudança de tela
+    } catch (error: any) {
+      console.error(error);
+      const errorMessage = error.response?.data?.message || 'E-mail ou senha inválidos.';
+      Alert.alert('Erro no Login', errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  // --- Fim da Lógica ---
+
+  // --- Parte Visual (JSX) ---
+  // O 'return' deve estar no nível principal da função LoginScreen
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.container}>
+          {/* Header baseado na "Pagina login.pdf" (título customizado) */}
+          <AppHeader title="Fitness" />
+
+          <Text style={styles.title}>LOGIN</Text>
+
+          <View style={styles.form}>
+            {/* Campo E-mail */}
+            <Text style={styles.label}>e-mail:</Text>
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: 'E-mail é obrigatório',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'E-mail inválido',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              )}
+            />
+            {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+
+            {/* Campo Senha */}
+            <Text style={styles.label}>Senha:</Text>
+            <Controller
+              control={control}
+              name="password"
+              rules={{ required: 'Senha é obrigatória' }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry
+                />
+              )}
+            />
+            {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+
+            {/* Botão OK */}
+            <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={isLoading} style={styles.button}>
+              {isLoading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <Text style={styles.buttonText}>OK</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          
+          {/* Espaçador para manter o layout centralizado */}
+          <View /> 
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+} // --- Fim da função LoginScreen ---
+
+// Os estilos são definidos fora da função do componente
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    paddingTop: 50, // Espaço seguro (safe area)
-    paddingHorizontal: 20,
+    flex: 1,
     backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  titleContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    // 'space-around' para centralizar verticalmente
+    justifyContent: 'space-around', 
+    minHeight: '100%', // Garante que o scroll ocupe a tela
   },
-  logo: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginVertical: 20,
   },
-  appName: {
+  form: {
+    width: '80%',
+  },
+  label: {
     fontSize: 16,
+    color: '#333',
+    marginTop: 15,
+  },
+  input: {
+    // Linha inferior para usabilidade, mantendo o design minimalista
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    fontSize: 18,
+    paddingVertical: 8,
+    width: '100%',
+  },
+  button: {
+    marginTop: 40,
+    alignSelf: 'center',
+  },
+  buttonText: {
+    fontSize: 22,
     fontWeight: 'bold',
-    marginLeft: 5,
+    color: '#000',
   },
-  sideContainer: {
-    width: 40, // Largura fixa para balancear o título central
-    alignItems: 'flex-start',
-  },
-  backButton: {
-    padding: 5,
-  },
-  backArrow: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  error: {
+    color: 'red',
+    marginTop: 5,
+    fontSize: 12,
   },
 });
