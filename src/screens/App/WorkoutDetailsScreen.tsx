@@ -11,7 +11,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as workoutService from '../../services/treinosService';
 import * as exerciseService from '../../services/exerciciosService';
-import { Exercise } from '../../types';
+import { Workout,Exercise } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../../navigation/AppNavigator';
 import { AppHeader } from '../../components/AppHeader';
