@@ -66,10 +66,9 @@ export default function RegisterScreen({ navigation }: Props) {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
-          {/* Header baseado na "Pagina Cadastro.pdf" [cite: 47] */}
           <AppHeader title="BYRON Fitness" />
 
-          <Text style={styles.title}>Cadastro</Text> [cite: 48]
+          <Text style={styles.title}>Cadastro</Text>
 
           <View style={styles.form}>
             {/* Campo Nome  */}
@@ -157,7 +156,7 @@ export default function RegisterScreen({ navigation }: Props) {
               <Text style={styles.error}>{errors.confirmPassword.message}</Text>
             )}
 
-            {/* Botão OK [cite: 53] */}
+            
             <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={isLoading} style={styles.button}>
               {isLoading ? (
                 <ActivityIndicator color="#000" />

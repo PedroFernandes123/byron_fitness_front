@@ -38,7 +38,7 @@ export default function HomeScreen({ navigation }: Props) {
   // ---------------------------------------------
 
   // 1. READ (Buscar dados)
-  const { data: workouts, isLoading, isError } = useQuery({
+  const { data: workouts, isLoading, isError } = useQuery<Workout[]>({
     queryKey: ['workouts'],
     queryFn: workoutService.getWorkouts,
   });
