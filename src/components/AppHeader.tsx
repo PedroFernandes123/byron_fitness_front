@@ -6,6 +6,17 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../navigation/AppNavigator';
 
 interface AppHeaderProps {
+  /** * O texto a ser exibido após o logo 'bF'. 
+   * Default: 'BYRON Fitness'
+   */
+  title?: string; // <-- VERIFIQUE SE ESTA LINHA EXISTE
+  
+  /** * Se true, mostra o botão de voltar (→). 
+   */
+  canGoBack?: boolean;
+}
+
+interface AppHeaderProps {
   /**
    * Se true, mostra o botão de voltar (→)[cite: 12].
    * Se false ou omitido, não mostra nada.
