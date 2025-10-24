@@ -32,10 +32,9 @@ export const createWorkout = async (name: string): Promise<Workout> => {
   return data;
 };
 
-/**
- * Atualiza o nome de um treino existente.
- * Rota (Confirmada): PUT /workouts/:id
- */
+
+ // Atualiza o nome de um treino existente.
+ 
 export const updateWorkout = async (id: string, name: string): Promise<Workout> => {
   // O arquivo workoutRoutes.ts define a rota PUT '/:id'
   const { data } = await api.put(`/workouts/${id}`, { name });
