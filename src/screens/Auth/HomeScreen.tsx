@@ -13,7 +13,7 @@ import {
   Platform,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import * as workoutService from '../../services/workoutService';
+import * as workoutService from '../../services/treinosService';
 import { Workout } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../../navigation/AppNavigator';
