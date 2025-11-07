@@ -1,3 +1,4 @@
+// src/screens/Auth/LoginScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -10,12 +11,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar, // Importar a StatusBar
 } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { useForm, Controller } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/AuthNavigator';
-import { AppHeader } from '../../components/AppHeader'; // Importa o Header
+import { AppHeader } from '../../components/AppHeader';
 
 // Define os tipos para o formulário
 type FormData = {
@@ -26,24 +28,19 @@ type FormData = {
 // Define o tipo das props da rota
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
-// A função do componente começa aqui
 export default function LoginScreen({ navigation }: Props) {
-  // --- Lógica do Componente ---
+  // --- Lógica (inalterada) ---
   const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
       await signIn(data.email, data.password);
-      // O RootNavigator cuidará da mudança de tela
     } catch (error: any) {
       console.error(error);
       const errorMessage = error.response?.data?.message || 'E-mail ou senha inválidos.';
@@ -54,22 +51,28 @@ export default function LoginScreen({ navigation }: Props) {
   };
   // --- Fim da Lógica ---
 
-  // --- Parte Visual (JSX) ---
-  // O 'return' deve estar no nível principal da função LoginScreen
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#fff' }}
+      // 1. Mudar o 'style' principal para o fundo preto
+      style={{ flex: 1, backgroundColor: '#000' }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      {/* 2. Mudar a StatusBar para 'light-content' (relógio e bateria brancos) */}
+      <StatusBar barStyle="light-content" />
+      
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
-          {/* Header baseado na "Pagina login.pdf" (título customizado) */}
-          <AppHeader title="Fitness" />
+          {/* 3. Passar as novas props de cor para o Header */}
+          <AppHeader 
+            title="Fitness" 
+            backgroundColor="red" 
+            textColor="#fff"
+            borderBottomColor="red" // Cor da borda igual ao fundo
+          />
 
           <Text style={styles.title}>LOGIN</Text>
 
           <View style={styles.form}>
-            {/* Campo E-mail */}
             <Text style={styles.label}>e-mail:</Text>
             <Controller
               control={control}
@@ -89,12 +92,13 @@ export default function LoginScreen({ navigation }: Props) {
                   value={value}
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  placeholder="seu@email.com"
+                  placeholderTextColor="#777" // Cor do placeholder
                 />
               )}
             />
             {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
-            {/* Campo Senha */}
             <Text style={styles.label}>Senha:</Text>
             <Controller
               control={control}
@@ -107,59 +111,59 @@ export default function LoginScreen({ navigation }: Props) {
                   onChangeText={onChange}
                   value={value}
                   secureTextEntry
+                  placeholder="******"
+                  placeholderTextColor="#777" // Cor do placeholder
                 />
               )}
             />
             {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
 
-            {/* Botão OK */}
             <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={isLoading} style={styles.button}>
               {isLoading ? (
-                <ActivityIndicator color="#000" />
+                <ActivityIndicator color="#fff" /> // Indicador branco
               ) : (
                 <Text style={styles.buttonText}>OK</Text>
               )}
             </TouchableOpacity>
           </View>
           
-          {/* Espaçador para manter o layout centralizado */}
           <View /> 
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
-} // --- Fim da função LoginScreen ---
+}
 
-// Os estilos são definidos fora da função do componente
+// 4. ATUALIZAR TODOS OS ESTILOS PARA O TEMA ESCURO
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000', // Fundo preto
     alignItems: 'center',
-    // 'space-around' para centralizar verticalmente
     justifyContent: 'space-around', 
-    minHeight: '100%', // Garante que o scroll ocupe a tela
+    minHeight: '100%',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 20,
+    color: '#fff', // Texto branco
   },
   form: {
     width: '80%',
   },
   label: {
     fontSize: 16,
-    color: '#333',
+    color: '#eee', // Texto branco (suave)
     marginTop: 15,
   },
   input: {
-    // Linha inferior para usabilidade, mantendo o design minimalista
     borderBottomWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#555', // Borda cinza escura
     fontSize: 18,
     paddingVertical: 8,
     width: '100%',
+    color: '#fff', // Texto do input branco
   },
   button: {
     marginTop: 40,
@@ -168,10 +172,10 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff', // Texto do botão branco
   },
   error: {
-    color: 'red',
+    color: 'red', // Erro vermelho (funciona em fundo preto)
     marginTop: 5,
     fontSize: 12,
   },
