@@ -1,26 +1,30 @@
 import api from './api';
 import { AuthResponse } from '../types';
 
-export const logout = async (): Promise<void> => {
-  // A rota /logout requer autenticação, mas o token já está
-  // sendo enviado automaticamente pelo interceptor do api.ts
-  await api.post('/users/logout');
-};
-
 /**
  * Autentica o usuário (Login)
- * Rota: POST /sessions
+ * Rota (TESTE): POST /users/login
  */
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
-  const { data } = await api.post('/sessions', { email, password });
+  // Voltando para /users/login (baseado nos arquivos de rota)
+  const { data } = await api.post('/users/login', { email, password });
   return data;
 };
 
 /**
  * Cadastra um novo usuário (Register)
- * Rota: POST /users
+ * Rota (TESTE): POST /users/register
  */
 export const register = async (name: string, email: string, password: string): Promise<AuthResponse> => {
-  const { data } = await api.post('/users', { name, email, password });
+  // Voltando para /users/register (baseado nos arquivos de rota)
+  const { data } = await api.post('/users/register', { name, email, password });
   return data;
+};
+
+/**
+ * Faz o logout do usuário
+ * Rota (TESTE): POST /users/logout
+ */
+export const logout = async (): Promise<void> => {
+  await api.post('/users/logout');
 };

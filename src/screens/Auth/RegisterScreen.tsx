@@ -71,7 +71,6 @@ export default function RegisterScreen({ navigation }: Props) {
           <Text style={styles.title}>Cadastro</Text>
 
           <View style={styles.form}>
-            {/* Campo Nome  */}
             <Text style={styles.label}>Nome:</Text>
             <Controller
               control={control}
@@ -89,7 +88,6 @@ export default function RegisterScreen({ navigation }: Props) {
             />
             {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
 
-            {/* Campo E-mail  */}
             <Text style={styles.label}>e-mail:</Text>
             <Controller
               control={control}
@@ -114,7 +112,6 @@ export default function RegisterScreen({ navigation }: Props) {
             />
             {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
-            {/* Campo Senha  */}
             <Text style={styles.label}>Senha:</Text>
             <Controller
               control={control}
@@ -132,7 +129,7 @@ export default function RegisterScreen({ navigation }: Props) {
             />
             {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
 
-            {/* Campo Confirme sua senha  */}
+            
             <Text style={styles.label}>Confirme sua senha:</Text>
             <Controller
               control={control}
@@ -166,7 +163,7 @@ export default function RegisterScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
           
-          {/* Espaçador para manter o layout centralizado */}
+          
           <View /> 
         </View>
       </ScrollView>
